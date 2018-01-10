@@ -1,0 +1,8 @@
+{
+  "name": "firebase-test",
+  "app_id": "e1bc9193",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
