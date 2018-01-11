@@ -5,6 +5,8 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 import { DetailsPage } from '../../pages/details/details';
+import { GooglePlus } from '@ionic-native/google-plus';
+import { Platform } from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
@@ -19,7 +21,10 @@ export class HomePage {
   constructor(
     public navCtrl: NavController, 
     public db: AngularFireDatabase, 
-    private afAuth: AngularFireAuth) {
+    private afAuth: AngularFireAuth, 
+    private googlePlus: GooglePlus, 
+    private platform: Platform) {
+
       this.items = db.list('students').valueChanges();
       console.log(this.items);
 
@@ -42,11 +47,26 @@ export class HomePage {
 
   signInGoogle() {
     console.log("clicked");
-    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    if(this.platform.is('cordova')) {
+      this.googlePlus.login({ 
+        'webClientId' : '835207808485-3ag6oegh35h528d4b7nco2op89b6k0uj.apps.googleusercontent.com'
+       }).then((res) => {
+         const googleCredential = firebase.auth.GoogleAuthProvider.credential(res.idToken);
+         firebase.auth().signInWithCredential(googleCredential)
+         .then((response) => {
+           console.log("Firebase Success : "+JSON.stringify(response));
+         });
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+    else {
+      this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
     .then((res) => {
       // this.userName = res.additionalUserInfo.profile.given_name;
       // console.log(res);
     });
+    }
   }
 
   signOut() {
