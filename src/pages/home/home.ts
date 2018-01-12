@@ -7,6 +7,7 @@ import * as firebase from 'firebase/app';
 import { DetailsPage } from '../../pages/details/details';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Platform } from 'ionic-angular';
+import { TakePhotoPage } from '../take-photo/take-photo';
 
 @Component({
   selector: 'page-home',
@@ -44,6 +45,10 @@ export class HomePage {
 
   gotoDetails() {
     this.navCtrl.push(DetailsPage);
+  }
+
+  gotoCamera() {
+    this.navCtrl.push(TakePhotoPage);
   }
 
   signInGoogle() {

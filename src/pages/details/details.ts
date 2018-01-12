@@ -19,6 +19,7 @@ import { Observable } from 'rxjs/Observable';
 })
 export class DetailsPage {
   items: Observable<any[]>;
+  
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
