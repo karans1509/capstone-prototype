@@ -4,6 +4,7 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { firebaseConfig } from '../../environment';
 import { API_KEY } from '../../environment';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 /*
   Generated class for the VisionServiceProvider provider.
@@ -14,7 +15,7 @@ import { API_KEY } from '../../environment';
 @Injectable()
 export class VisionServiceProvider {
 
-  constructor(public http: Http) {
+  constructor(public http: Http, private db: AngularFireDatabase) {
     console.log('Hello VisionServiceProvider Provider');
   }
 
@@ -35,6 +36,10 @@ export class VisionServiceProvider {
     }
 
     return this.http.post('https://vision.googleapis.com/v1/images:annotate?key='+API_KEY, body);
+  }
+
+  saveResults(imageData, results) {
+    this.db.list('items').push({ imageData: imageData, results: results });
   }
 
 }

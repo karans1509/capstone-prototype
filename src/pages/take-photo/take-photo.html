@@ -14,16 +14,21 @@
 
 
 <ion-content padding>
-  <ion-card *ngFor="let item of items| async" >
-    <img [src]="'data:image/png;base64,'+item.imageData" alt="">
+  <ion-refresher (ionRefresh)="refreshData($event)" >
+  </ion-refresher>
+  <ion-card *ngFor="let item of items| async, let i = index" >
+    <img [src]="'data:image/png;base64,'+item.imageData" alt="" style="width: 300px; height: 200px; object-fit:cover">
+    <!-- <ion-img [src]="'data:image/png;base64,'+item.imageData" alt="" > -->
+    <!-- </ion-img> -->
     <ion-card-content>
       <ion-list no-lines>
-        <ion-list-header>
-          Labels
-        </ion-list-header>
-        <ion-item *ngFor="let label of item.results[0].labelAnnotations" >
+        <!-- <ion-list-header> -->
+          <!-- Labels -->
+        <!-- </ion-list-header> -->
+        <!-- <ion-item *ngFor="let label of item.results[0].labelAnnotations" >
           {{ label.description }}
-        </ion-item>
+        </ion-item> -->
+        <ion-item text-center> {{labels[i]}} </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>

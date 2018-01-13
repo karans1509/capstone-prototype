@@ -7,5 +7,5 @@ export const firebaseConfig = {
         messagingSenderId: "835207808485" 
 }
 
-export const API_KEY = "AIzaSyCnXR1A7dj3O7Ft9MQ7ryHS7qZ3uxaPO4E";
+export const API_KEY = "AIzaSyDsCzmJQJCLOSLXXOx2FF6ec8oXL5ALGWs";
 

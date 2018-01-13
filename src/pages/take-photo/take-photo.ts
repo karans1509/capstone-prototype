@@ -6,6 +6,7 @@ import { VisionServiceProvider } from '../../providers/vision-service/vision-ser
 import { AngularFireDatabase, AngularFireList, AngularFireAction } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
+import 'rxjs/add/operator/map';
 /**
  * Generated class for the TakePhotoPage page.
  *
@@ -21,6 +22,7 @@ import * as firebase from 'firebase/app';
 export class TakePhotoPage {
   itemsRef: Observable<AngularFireAction<firebase.database.DataSnapshot>[]>;
   items: any;
+  labels = [];
 
   constructor(
     public navCtrl: NavController, 
@@ -29,15 +31,50 @@ export class TakePhotoPage {
     private vision: VisionServiceProvider, 
     private db: AngularFireDatabase, 
     private alert: AlertController) {
-      this.items = this.db.list('items');
+
+      this.items = this.db.list('items').valueChanges();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad TakePhotoPage');
-  }
+    this.db.list('items').valueChanges().subscribe(resp => {
 
-  saveResults(imageData, results) {
-    this.items.push({ imageData: imageData, results: results });
+      resp.forEach(item => {
+
+        const annotations = item['results'];
+        // console.log(annotations[0].labelAnnotations);
+        let label: String;
+        let total = [];
+        annotations[0].labelAnnotations.forEach( action => {
+          console.log(action.description);
+          let desc = action.description;
+          if((desc.match(/laptop/g) || desc.match(/electronic/) || desc.match(/computer/) || desc.match(/device/) || desc.match(/technology/) || desc.match(/gadget/)) && action.score > 0.75) {
+            console.log("E-WASTE");
+            label = "E-WASTE";
+          }
+          if(desc.match(/plastic/g) || desc.match(/bottle/) || desc.match(/glass/) || desc.match(/can/) || desc.match(/paper/) || desc.match(/book/)) {
+            console.log("RE-CYCLE");
+            label = "RE-CYCLE";
+          }
+          if(desc.match(/junk food/g) || desc.match(/juice/)) {
+            console.log("GARBAGE");
+            label = "GARBAGE";
+          }
+          if(desc.match(/textile/g) || desc.match(/wool/g) || desc.match(/linen/g) || desc.match(/cloth/g)) {
+            console.log("DONATE");
+            label = "DONATE";
+          }
+
+        })
+        if(label == undefined) {
+          this.labels.push("NOT SURE!");
+        }
+        else
+        this.labels.push(label);
+      })
+    })
+    // console.log(this.items);
+    console.log(this.labels);
   }
 
   showAlert(message) {
@@ -47,6 +84,49 @@ export class TakePhotoPage {
       buttons: ['OK']
     });
     alert.present();
+  }
+
+  refreshData(refresher) {
+    this.db.list('items').valueChanges().subscribe(resp => {
+
+      resp.forEach(item => {
+
+        const annotations = item['results'];
+        // console.log(annotations[0].labelAnnotations);
+        let label: String;
+        let total = [];
+        annotations[0].labelAnnotations.forEach( action => {
+          console.log(action.description);
+          let desc = action.description;
+          if((desc.match(/laptop/g) || desc.match(/electronic/g) || desc.match(/computer/g) || desc.match(/device/g) || desc.match(/technology/g) || desc.match(/gadget/g)) && action.score > 0.75) {
+            console.log("E-WASTE");
+            label = "E-WASTE";
+          }
+          if(desc.match(/plastic/g) || desc.match(/bottle/g) || desc.match(/glass/g) || desc.match(/can/g) || desc.match(/paper/g) || desc.match(/book/g)) {
+            console.log("RE-CYCLE");
+            label = "RE-CYCLE";
+          }
+          if(desc.match(/junk food/g) || desc.match(/juice/g)) {
+            console.log("GARBAGE");
+            label = "GARBAGE";
+          }
+          if(desc.match(/textile/g) || desc.match(/wool/g) || desc.match(/linen/g) || desc.match(/cloth/g)) {
+            console.log("DONATE");
+            label = "DONATE";
+          }
+
+        })
+        if(label == undefined) {
+          this.labels.push("NOT SURE!");
+        }
+        else
+        this.labels.push(label);
+      })
+      refresher.complete();
+    })
+    // console.log(this.items);
+    console.log(this.labels);
+    
   }
 
   takePhoto() {
@@ -61,12 +141,13 @@ export class TakePhotoPage {
 
     this.camera.getPicture(options).then((imageData) => {
       this.vision.getLabels(imageData).subscribe((result) => {
-        this.saveResults(imageData, result.json().responses)
+        console.log(result);
+        this.vision.saveResults(imageData, result.json().responses);
+        // this.saveResults(imageData, result.json().responses)
       }, (err) => {
         this.showAlert(err);
       });
     }, (err) => {
       this.showAlert(err);    })
   }
-
 }

@@ -39,7 +39,7 @@ export class HomePage {
         }
         this.userName = user.displayName;
         this.photoUrl = user.photoURL;
-        console.log(user.photoURL);
+        // console.log(user.photoURL);
       })
   }
 
