@@ -25,52 +25,53 @@ export class TakePhotoPage {
   labels = [];
 
   constructor(
-    public navCtrl: NavController, 
-    public navParams: NavParams, 
-    private camera: Camera, 
-    private vision: VisionServiceProvider, 
-    private db: AngularFireDatabase, 
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private camera: Camera,
+    private vision: VisionServiceProvider,
+    private db: AngularFireDatabase,
     private alert: AlertController) {
 
-      this.items = this.db.list('items').valueChanges();
+    this.items = this.db.list('items').valueChanges();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad TakePhotoPage');
+
     this.db.list('items').valueChanges().subscribe(resp => {
-
       resp.forEach(item => {
-
         const annotations = item['results'];
         // console.log(annotations[0].labelAnnotations);
         let label: String;
         let total = [];
-        annotations[0].labelAnnotations.forEach( action => {
+        annotations[0].labelAnnotations.forEach(action => {
           console.log(action.description);
           let desc = action.description;
-          if((desc.match(/laptop/g) || desc.match(/electronic/) || desc.match(/computer/) || desc.match(/device/) || desc.match(/technology/) || desc.match(/gadget/)) && action.score > 0.75) {
+          if ((desc.match(/laptop/g) || desc.match(/electronic/) || desc.match(/computer/) || desc.match(/device/) || desc.match(/technology/) || desc.match(/gadget/)) && action.score > 0.75) {
             console.log("E-WASTE");
             label = "E-WASTE";
+            // break;
           }
-          if(desc.match(/plastic/g) || desc.match(/bottle/) || desc.match(/glass/) || desc.match(/can/) || desc.match(/paper/) || desc.match(/book/)) {
+          if (desc.match(/plastic/g) || desc.match(/bottle/) || desc.match(/glass/) || desc.match(/can/) || desc.match(/paper/) || desc.match(/book/)) {
             console.log("RE-CYCLE");
             label = "RE-CYCLE";
+
           }
-          if(desc.match(/junk food/g) || desc.match(/juice/)) {
+          if (desc.match(/junk food/g) || desc.match(/juice/)) {
             console.log("GARBAGE");
             label = "GARBAGE";
           }
-          if(desc.match(/textile/g) || desc.match(/wool/g) || desc.match(/linen/g) || desc.match(/cloth/g)) {
+          if (desc.match(/textile/g) || desc.match(/wool/g) || desc.match(/linen/g) || desc.match(/cloth/g)) {
             console.log("DONATE");
             label = "DONATE";
           }
 
         })
-        if(label == undefined) {
+        if (label == undefined) {
           this.labels.push("NOT SURE!");
         }
         else
-        this.labels.push(label);
+          this.labels.push(label);
       })
     })
     // console.log(this.items);
@@ -95,38 +96,38 @@ export class TakePhotoPage {
         // console.log(annotations[0].labelAnnotations);
         let label: String;
         let total = [];
-        annotations[0].labelAnnotations.forEach( action => {
+        annotations[0].labelAnnotations.forEach(action => {
           console.log(action.description);
           let desc = action.description;
-          if((desc.match(/laptop/g) || desc.match(/electronic/g) || desc.match(/computer/g) || desc.match(/device/g) || desc.match(/technology/g) || desc.match(/gadget/g)) && action.score > 0.75) {
+          if ((desc.match(/laptop/g) || desc.match(/electronic/g) || desc.match(/computer/g) || desc.match(/device/g) || desc.match(/technology/g) || desc.match(/gadget/g)) && action.score > 0.75) {
             console.log("E-WASTE");
             label = "E-WASTE";
           }
-          if(desc.match(/plastic/g) || desc.match(/bottle/g) || desc.match(/glass/g) || desc.match(/can/g) || desc.match(/paper/g) || desc.match(/book/g)) {
+          if (desc.match(/plastic/g) || desc.match(/bottle/g) || desc.match(/glass/g) || desc.match(/can/g) || desc.match(/paper/g) || desc.match(/book/g)) {
             console.log("RE-CYCLE");
             label = "RE-CYCLE";
           }
-          if(desc.match(/junk food/g) || desc.match(/juice/g)) {
+          if (desc.match(/junk food/g) || desc.match(/juice/g)) {
             console.log("GARBAGE");
             label = "GARBAGE";
           }
-          if(desc.match(/textile/g) || desc.match(/wool/g) || desc.match(/linen/g) || desc.match(/cloth/g)) {
+          if (desc.match(/textile/g) || desc.match(/wool/g) || desc.match(/linen/g) || desc.match(/cloth/g)) {
             console.log("DONATE");
             label = "DONATE";
           }
 
         })
-        if(label == undefined) {
+        if (label == undefined) {
           this.labels.push("NOT SURE!");
         }
         else
-        this.labels.push(label);
+          this.labels.push(label);
       })
       refresher.complete();
     })
     // console.log(this.items);
     console.log(this.labels);
-    
+
   }
 
   takePhoto() {
@@ -148,6 +149,7 @@ export class TakePhotoPage {
         this.showAlert(err);
       });
     }, (err) => {
-      this.showAlert(err);    })
+      this.showAlert(err);
+    })
   }
 }

@@ -44,7 +44,7 @@ export class HomePage {
   }
 
   gotoDetails() {
-    this.navCtrl.push(DetailsPage);
+    // this.navCtrl.push(DetailsPage);
   }
 
   gotoCamera() {
